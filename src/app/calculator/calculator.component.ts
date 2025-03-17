@@ -61,11 +61,20 @@ export class CalculatorComponent {
     // If there is already first number and an operator solve the equation
     // use the result as the first number and assign the new operator
     if (typeof this.equation()[1] !== 'undefined') {
-      this.calculate();
+      if (this.calculate() === 'Error') {
+        this.clearAll();
+        return;
+      }
+    }
+
+    if (this.numberInput() === 'Error') {
+      this.clearAll();
+      return;
     }
 
     // Take the input and add it to the equation
-    this.setFirstNumber(Number(this.numberInput()));
+    this.setFirstNumber(parseFloat(this.numberInput()));
+
     this.clearInput();
 
     // Add the operator to the equation
@@ -79,7 +88,7 @@ export class CalculatorComponent {
       typeof this.equation()[0] === 'undefined' ||
       typeof this.equation()[1] === 'undefined'
     )
-      return;
+      return 0;
 
     this.setSecondNumber(Number(this.numberInput()));
     this.clearInput();
@@ -90,6 +99,8 @@ export class CalculatorComponent {
 
     this.numberInput.set(String(result));
     this.equation.set([]);
+
+    return result;
   }
 
   getResult(equation: Equation) {
@@ -101,6 +112,7 @@ export class CalculatorComponent {
       case '*':
         return equation[0]! * equation[2]!;
       case '/':
+        if (equation[2] === 0) return 'Error';
         return equation[0]! / equation[2]!;
       default:
         return 0;
